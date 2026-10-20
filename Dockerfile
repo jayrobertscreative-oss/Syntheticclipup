@@ -13,6 +13,5 @@ COPY start.sh .
 RUN chmod +x start.sh
 
 ENV SCU_DATA_DIR=/data
-VOLUME /data
 EXPOSE 8000
 CMD ["./start.sh"]
