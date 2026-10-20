@@ -1,0 +1,25 @@
+{% extends "public/_layout.html" %}
+{% block title %}Design previews — Synthetic Clip Up{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block main %}
+<section class="section-tight glow-bg"><div class="container stack" style="--gap:28px">
+  <div class="section-head" style="margin:0"><span class="eyebrow">Phase 1 · Design previews</span><h1 class="h1">Dashboards for every account type</h1>
+    <p class="lead measure">Working, responsive mockups with clearly labelled demo data. Accounts, money and social connections are wired up in later phases.</p></div>
+  <div class="grid-3">
+    {% for role, (label, who) in roles.items() %}
+    <a class="card card-hover stack" style="--gap:12px" href="/design/{{ role }}">
+      <span class="eyebrow">{{ label }}</span>
+      <h2 class="h3">{{ {"clipper": "Clipper dashboard", "manager": "Campaign manager dashboard", "owner": "Owner Control Centre"}[role] }}</h2>
+      <p class="muted small">{{ {"clipper": "Earnings, submissions with the 60-minute rule, connected accounts, joined campaigns and enquiries.", "manager": "Review queue with 72-hour clocks, campaign funding, verification progress and campaign creation with live fee quotes.", "owner": "Revenue by fee type, owner-withdrawable balance, campaign oversight, approvals and the clipper leaderboard."}[role] }}</p>
+      <div class="row" style="--gap:6px">{% for g, items in navs[role] %}{% for slug, l, i, c in items %}{% if slug in built[role] %}<span class="badge">{{ l }}</span>{% endif %}{% endfor %}{% endfor %}</div>
+      <span class="link small">Open preview →</span>
+    </a>
+    {% endfor %}
+  </div>
+  <div class="grid-2">
+    <a class="card card-hover stack" style="--gap:10px" href="/design/clipper/portfolio"><span class="eyebrow">Portfolio Builder</span><h2 class="h3">Visual editor</h2><p class="muted small">Sections, colours, desktop/mobile preview, publish controls.</p></a>
+    <a class="card card-hover stack" style="--gap:10px" href="/design/u/demo"><span class="eyebrow">Portfolio</span><h2 class="h3">Public clipper site</h2><p class="muted small">What syntheticclipup.com/u/username will look like, with the Work With Me form.</p></a>
+  </div>
+  <p class="muted small">Screens not yet designed in detail show what they'll contain and which phase delivers them. Set <span class="mono">SCU_DESIGN_PREVIEWS=0</span> to hide all previews.</p>
+</div></section>
+{% endblock %}

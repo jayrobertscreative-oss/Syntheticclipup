@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% import "_ui.html" as ui %}
+{% block title %}{{ role_label }} — Design preview · Synthetic Clip Up{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block body %}
+<div class="dash">
+  <aside class="dash-side" aria-label="{{ role_label }} navigation">
+    <a class="logo" href="/"><img src="/static/scu-emblem.jpg" alt="" width="34" height="34"><div><b>SYNTHETIC CLIP UP</b><small>{{ "OWNER CONTROL CENTRE" if role == "owner" else "DASHBOARD" }}</small></div></a>
+    <a class="role-switch" href="/design" title="Switch preview role">
+      <span class="avatar sm">{{ who[:2]|upper }}</span>
+      <div style="min-width:0"><small>{{ role_label }}</small><b>{{ who }}</b></div>
+      {{ ui.icon("grid", "icon") }}
+    </a>
+    {% for group, items in side %}
+    <div class="side-group">
+      {% if group %}<h5>{{ group }}</h5>{% endif %}
+      {% for slug, label, icon, count in items %}
+      <a class="side-link" href="/design/{{ role }}/{{ slug }}"{% if slug == screen %} aria-current="page"{% endif %}>{{ ui.icon(icon) }}<span>{{ label }}</span>{% if count %}<span class="count">{{ count }}</span>{% endif %}</a>
+      {% endfor %}
+    </div>
+    {% endfor %}
+    <div class="side-foot">
+      {% if role == "clipper" %}<a class="btn btn-primary btn-block btn-sm" href="/studio">{{ ui.icon("scissors") }}Open Clip Studio</a>{% endif %}
+      {% if role == "manager" %}<a class="btn btn-primary btn-block btn-sm" href="/design/manager/create">{{ ui.icon("plus") }}New campaign</a>{% endif %}
+      {% if role == "owner" %}<div class="badge" style="width:100%;justify-content:center">{{ ui.icon("lock") }}MFA required in production</div>{% endif %}
+    </div>
+  </aside>
+  <div class="scrim" aria-hidden="true"></div>
+  <div class="dash-main">
+    <header class="dash-top">
+      <button class="iconbtn dash-menu" data-drawer aria-label="Open navigation" aria-expanded="false">{{ ui.icon("menu") }}</button>
+      <div class="dash-search">{{ ui.icon("search") }}<span>Search {{ "campaigns, clips, payouts" if role != "owner" else "accounts, campaigns, transactions" }}…</span></div>
+      <div class="right">
+        <span class="badge badge-example">Design preview</span>
+        <button class="iconbtn" aria-label="Notifications">{{ ui.icon("bell") }}<span class="dot"></span></button>
+      </div>
+    </header>
+    <main class="dash-body" id="main">
+      {{ ui.demo_banner() }}
+      {% block dash %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% endblock %}

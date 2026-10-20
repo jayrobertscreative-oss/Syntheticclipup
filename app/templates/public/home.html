@@ -1,0 +1,180 @@
+{% extends "public/_layout.html" %}
+{% block main %}
+
+{# 1 — Hero #}
+<section class="hero glow-bg">
+  <div class="grid-bg" style="position:absolute;inset:0;z-index:-1"></div>
+  <div class="container hero-grid">
+    <div class="reveal">
+      <p class="tagline">Create. Clip. Earn. Scale.</p>
+      <h1 class="display" style="margin-top:18px">Turn clips into <span class="line2 grad-text">a clipping business.</span></h1>
+      <p class="lead measure" style="margin-top:22px">Join paid campaigns from brands, streamers and creators. Cut clips with the built-in AI Clip Studio, post them on your verified accounts, earn on every eligible view — and publish a free portfolio that wins you monthly retainers.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary btn-lg" href="/get-started?role=clipper">Start Clipping {{ ui.icon("arrow") }}</a>
+        <a class="btn btn-lg" href="/get-started?role=manager">Launch a Campaign</a>
+      </div>
+      <div class="hero-meta">
+        <span>{{ ui.icon("check") }}Free to join</span>
+        <span>{{ ui.icon("check") }}Fees shown before you commit</span>
+        <span>{{ ui.icon("check") }}Verified accounts only</span>
+      </div>
+    </div>
+    <div class="hero-visual reveal d2">
+      <img class="hero-emblem" src="/static/scu-logo.jpg" alt="" width="120" height="120">
+      <div class="card-glass" style="padding:18px;display:grid;gap:14px">
+        <div class="row" style="justify-content:space-between"><span class="eyebrow">Campaign</span>{{ ui.example_badge() }}</div>
+        {% set c = campaigns[0] %}
+        <div class="row" style="--gap:14px;flex-wrap:nowrap">
+          <div style="width:96px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;flex:none;position:relative">{{ ui.art(c.art[0], c.art[1], "hero") }}</div>
+          <div style="min-width:0"><b style="font-family:var(--display);display:block">{{ c.title }}</b><span class="host">{{ c.host }} {{ ui.verified() }}</span></div>
+        </div>
+        <div class="row" style="justify-content:space-between">{{ ui.funding_badge("funded") }}<b class="num" style="font:600 18px var(--display)">{{ c.rate_per_1k|money }}<span class="muted small" style="font-family:var(--body);font-weight:400"> / 1K views</span></b></div>
+        <hr class="divider">
+        <div class="stack" style="--gap:10px">
+          <div class="row" style="justify-content:space-between;font-size:13.5px"><span class="row" style="--gap:8px">{{ ui.platform_chip(("TikTok","TT")) }}<span>Your clip · posted 14:02</span></span>{{ ui.status("Awaiting Host Review","info") }}</div>
+          <div class="row" style="justify-content:space-between;font-size:13.5px"><span class="muted">Submitted 14:24 — within the 60-minute window</span><span class="timer ok">22 min</span></div>
+        </div>
+        <div class="calc-out" style="font-size:13.5px">
+          <div><span class="muted">{{ "{:,}".format(hero.eligible_views) }} verified views × {{ hero.rate_per_1k|money }} / 1K</span><b>{{ hero.gross|money }}</b></div>
+          <div><span class="muted">Platform fee ({{ "%g"|format(hero.clipper_fee_bps / 100) }}%)</span><b>−{{ hero.clipper_fee|money }}</b></div>
+          <div class="total"><span>You receive</span><b>{{ hero.net|money }}</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# Live, genuine platform numbers #}
+<section class="container" aria-labelledby="live-h">
+  <h2 id="live-h" class="sr-only">Platform so far</h2>
+  <dl class="kpis" style="--n:4">
+    {{ ui.kpi("Clips rendered by Clip Studio", "{:,}".format(stats.clips), "live count") }}
+    {{ ui.kpi("Minutes of video processed", "{:,}".format(stats.minutes), "live count") }}
+    {{ ui.kpi("Live paid campaigns", "Opening soon" if stats.campaigns_live == 0 else stats.campaigns_live, "marketplace launches after payment approval", text=stats.campaigns_live == 0) }}
+    {{ ui.kpi("Paid to clippers", "Opening soon" if stats.paid_out == 0 else stats.paid_out|money, "only completed payouts will count", text=stats.paid_out == 0) }}
+  </dl>
+</section>
+
+{# 2 — How it works #}
+<section class="section" id="how">
+  <div class="container">
+    <div class="section-head center"><span class="eyebrow">How Synthetic Clip Up works</span><h2 class="h2">From long video to paid clip in four steps</h2></div>
+    <ol class="steps" style="list-style:none;padding:0;margin:0">
+      <li class="step"><span class="n">01</span><div class="ico">{{ ui.icon("flag") }}</div><h3>Join a campaign</h3><p>Eligible clippers join instantly. You get the brief, assets and the host's community link.</p></li>
+      <li class="step"><span class="n">02</span><div class="ico">{{ ui.icon("scissors") }}</div><h3>Create in Clip Studio</h3><p>AI finds the best moments, adds captions and renders 9:16 or 16:9 — or bring your own edit.</p></li>
+      <li class="step"><span class="n">03</span><div class="ico">{{ ui.icon("clock") }}</div><h3>Post &amp; submit within 60 min</h3><p>Publish on a connected, verified account, then paste the link. We check the account and publish time.</p></li>
+      <li class="step"><span class="n">04</span><div class="ico">{{ ui.icon("wallet") }}</div><h3>Get paid on views</h3><p>The host reviews within 72 hours. Rewards follow verified views at the campaign's rate.</p></li>
+    </ol>
+  </div>
+</section>
+
+{# 3 — Featured campaigns #}
+<section class="section-tight">
+  <div class="container">
+    <div class="page-head" style="margin-bottom:28px">
+      <div class="section-head" style="margin:0"><span class="eyebrow">Featured campaigns</span><h2 class="h2">What campaigns will look like</h2>
+        <p class="muted measure">The marketplace opens once payments are approved. These cards are examples of the format — every one shows whether rewards are actually deposited.</p></div>
+      <a class="btn" href="/campaigns">Explore campaigns {{ ui.icon("arrow") }}</a>
+    </div>
+    <div class="campaigns">{% for c in campaigns %}{{ ui.campaign_card(c) }}{% endfor %}</div>
+  </div>
+</section>
+
+{# 4 — Clip Studio demo #}
+<section class="section" id="studio">
+  <div class="container split">
+    <div>
+      <span class="eyebrow">AI Clip Studio</span>
+      <h2 class="h2" style="margin-top:12px">Real clipping software, built in</h2>
+      <p class="lead" style="margin-top:16px">Upload a video you own. Clip Studio transcribes it, picks the strongest moments, burns in word-by-word captions and renders finished MP4s — on our servers, not in your browser.</p>
+      <ul class="feature-list">
+        <li>{{ ui.icon("check") }}<span>Speech-to-text with word timings, then AI highlight selection that never cuts mid-sentence</span></li>
+        <li>{{ ui.icon("check") }}<span>Six caption styles, vertical 9:16, square and 16:9 exports</span></li>
+        <li>{{ ui.icon("check") }}<span>Live progress for every real processing stage, with retry if something fails</span></li>
+      </ul>
+      <div class="row" style="margin-top:28px"><a class="btn btn-primary" href="/studio">Open Clip Studio {{ ui.icon("arrow") }}</a><a class="btn btn-ghost" href="/clip-studio">How it works</a></div>
+    </div>
+    {% include "public/_studio_mock.html" %}
+  </div>
+</section>
+
+{# 5 — Portfolio builder #}
+<section class="section-tight">
+  <div class="container split">
+    {% include "public/_portfolio_mock.html" %}
+    <div>
+      <span class="eyebrow">Free portfolio website</span>
+      <h2 class="h2" style="margin-top:12px">Your clipping business, one link</h2>
+      <p class="lead" style="margin-top:16px">Every clipper gets a free site at <span class="mono" style="color:var(--fg)">syntheticclipup.com/u/you</span> with verified accounts, opted-in stats, featured clips and a Work With Me form that lands enquiries in your dashboard.</p>
+      <ul class="feature-list">
+        <li>{{ ui.icon("check") }}<span>Templates, colours, sections you can rearrange — no code</span></li>
+        <li>{{ ui.icon("check") }}<span>Only verified numbers, and only the ones you choose to show</span></li>
+        <li>{{ ui.icon("check") }}<span>Retainer enquiries go straight to you — no marketplace fee on off-platform deals</span></li>
+      </ul>
+      <div class="row" style="margin-top:28px"><a class="btn" href="/portfolio-builder">See the builder {{ ui.icon("arrow") }}</a></div>
+    </div>
+  </div>
+</section>
+
+{# 6 — Verified accounts #}
+<section class="section">
+  <div class="container">
+    <div class="section-head center"><span class="eyebrow">Verified social accounts</span><h2 class="h2">Proof built in, for both sides</h2><p class="muted measure center">Clippers connect TikTok, Instagram, YouTube and Facebook. Ownership is proven through official sign-in, a bio code, or manual review — never just a typed username.</p></div>
+    <div class="grid-4">
+      <div class="tile"><div class="ico">{{ ui.icon("shield") }}</div><h3>Ownership you can trust</h3><p>Hosts only ever review clips from accounts the clipper has proven they control.</p></div>
+      <div class="tile"><div class="ico">{{ ui.icon("clock") }}</div><h3>Fresh, original posts</h3><p>The 60-minute rule is checked against the platform's own publish time where available.</p></div>
+      <div class="tile"><div class="ico">{{ ui.icon("eye") }}</div><h3>Verified views</h3><p>Rewards follow view counts from authorised integrations. Unavailable data is labelled, not guessed.</p></div>
+      <div class="tile"><div class="ico">{{ ui.icon("star") }}</div><h3>Portfolio credibility</h3><p>Verified accounts and stats make your public portfolio worth trusting.</p></div>
+    </div>
+  </div>
+</section>
+
+{# 7 — Analytics preview #}
+<section class="section-tight">
+  <div class="container split">
+    <div>
+      <span class="eyebrow">Campaign analytics</span>
+      <h2 class="h2" style="margin-top:12px">Every view, fee and payout — accounted for</h2>
+      <p class="lead" style="margin-top:16px">Hosts see verified views, cost per 1K and review deadlines. Clippers see gross, fee and net for every reward before it's paid. All money maths runs on the server against an auditable ledger.</p>
+      <div class="row" style="margin-top:28px"><a class="btn" href="/design">Preview the dashboards {{ ui.icon("arrow") }}</a></div>
+    </div>
+    <div class="card-glass" style="padding:20px;display:grid;gap:16px">
+      <div class="row" style="justify-content:space-between"><b style="font-family:var(--display)">Campaign performance</b>{{ ui.example_badge("Demo data") }}</div>
+      <dl class="kpis" style="--n:3">{{ ui.kpi("Verified views", "2.94M") }}{{ ui.kpi("Cost / 1K", "$1.84") }}{{ ui.kpi("Acceptance", "77%") }}</dl>
+      <div class="stack" style="--gap:8px">
+        {% for label, pct, val in [("TikTok", 58, "1.71M"), ("YouTube Shorts", 27, "794K"), ("Instagram Reels", 15, "441K")] %}
+        <div class="stack" style="--gap:5px"><div class="row" style="justify-content:space-between;font-size:13px"><span class="muted">{{ label }}</span><b class="num">{{ val }}</b></div><div class="meter"><i style="width:{{ pct }}%"></i></div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# 8 — Pricing transparency #}
+<section class="section" id="fees">
+  <div class="container">
+    <div class="section-head center"><span class="eyebrow">Pricing &amp; fee transparency</span><h2 class="h2">Two simple fees. Shown before you commit.</h2></div>
+    <div class="grid-3">
+      <div class="card price-card"><span class="eyebrow">Clippers</span><div class="price">{{ "%g"|format(s.clipper_fee_bps / 100) }}%<small> of paid rewards</small></div><p class="muted">Free to join. On a {{ payout.gross|money }} reward you receive {{ payout.net|money }}. Clip Studio has its own free tier.</p></div>
+      <div class="card price-card"><span class="eyebrow">Hosts · Fully Funded</span><div class="price">{{ "%g"|format(s.host_fee_bps / 100) }}%<small> on top of budget</small></div><p class="muted">{{ funded.reward_budget|money }} budget → {{ funded.due_now|money }} collected. The fee is recorded separately from reward funds.</p></div>
+      <div class="card price-card"><span class="eyebrow">Hosts · Pay As You Go</span><div class="price">{{ "%g"|format(s.host_fee_bps / 100) }}%<small> launch fee</small></div><p class="muted">{{ flex.advertised_limit|money }} limit → {{ flex.launch_fee|money }} due at launch, credited against later host fees. Rewards are paid as you fund approved clips.</p></div>
+    </div>
+    <p class="center" style="margin-top:24px"><a class="link" href="/pricing">Full pricing and fee calculator →</a></p>
+  </div>
+</section>
+
+{# 9 — FAQ #}
+<section class="section-tight" id="faq">
+  <div class="container">
+    <div class="section-head center"><span class="eyebrow">FAQ</span><h2 class="h2">Questions, answered straight</h2></div>
+    <div class="faq">{% for q, a in faq %}<details><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}</div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container"><div class="cta-band">
+    <div class="stack" style="--gap:10px"><h2 class="h2">Start your clipping business</h2><p class="muted">Create clips today. Earn when campaigns open.</p></div>
+    <div class="row"><a class="btn btn-primary btn-lg" href="/get-started?role=clipper">Start Clipping</a><a class="btn btn-lg" href="/get-started?role=manager">Launch a Campaign</a></div>
+  </div></div>
+</section>
+{% endblock %}

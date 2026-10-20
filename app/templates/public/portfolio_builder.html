@@ -1,0 +1,23 @@
+{% extends "public/_layout.html" %}
+{% block title %}Portfolio Builder — Synthetic Clip Up{% endblock %}
+{% block main %}
+<section class="hero glow-bg">
+  <div class="container split">
+    <div class="reveal">
+      <span class="eyebrow">Free portfolio website</span>
+      <h1 class="h1" style="margin-top:14px">A professional site for your clipping business. Free.</h1>
+      <p class="lead" style="margin-top:18px">Pick a template, add your best clips and verified stats, and publish to <span class="mono" style="color:var(--fg)">syntheticclipup.com/u/you</span>. Businesses can hire you straight from the page.</p>
+      <div class="hero-ctas"><a class="btn btn-primary btn-lg" href="/get-started?role=clipper">Build my portfolio</a><a class="btn btn-lg" href="/design/u/demo">See an example site</a></div>
+    </div>
+    <div class="reveal d2">{% include "public/_portfolio_mock.html" %}</div>
+  </div>
+</section>
+<section class="section-tight">
+  <div class="container grid-3">
+    <div class="tile"><div class="ico">{{ ui.icon("layout") }}</div><h3>Visual editor</h3><p>Templates, colours, images and sections you drag into order. Desktop and mobile preview. No code.</p></div>
+    <div class="tile"><div class="ico">{{ ui.icon("shield") }}</div><h3>Verified, opt-in stats</h3><p>Show total verified views, completed campaigns or reach — only the metrics you switch on, only from verified data. Earnings stay private unless you choose otherwise.</p></div>
+    <div class="tile"><div class="ico">{{ ui.icon("mail") }}</div><h3>Work With Me enquiries</h3><p>Clients send their business, monthly needs and budget. Enquiries land in your dashboard inbox. No marketplace fee on deals you agree off-platform.</p></div>
+  </div>
+</section>
+<section class="section-tight"><div class="container"><div class="cta-band"><div class="stack" style="--gap:8px"><h2 class="h2">Custom domains are coming</h2><p class="muted">Use your own domain as a future premium option. The /u/ address is always free.</p></div><a class="btn btn-primary btn-lg" href="/design/clipper/portfolio">Preview the editor</a></div></div></section>
+{% endblock %}

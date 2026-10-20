@@ -1,0 +1,28 @@
+{# Shared by the public portfolio preview and the editor canvas. Expects pf. #}
+<div class="pf-site" style="--accent:var(--purple)">
+  <div class="pf-hero" style="padding:clamp(24px,5vw,56px);flex-wrap:wrap">
+    <div class="avatar" style="width:84px;height:84px;font-size:26px">KM</div>
+    <div class="stack" style="--gap:6px;flex:1;min-width:220px"><h1 class="h2">{{ pf.name }}</h1><p class="lead">{{ pf.headline }}</p></div>
+    <a class="btn btn-primary" href="#hire">Work With Me</a>
+  </div>
+  <div style="padding:clamp(20px,4vw,48px);display:grid;gap:32px">
+    <p class="lead measure">{{ pf.bio }}</p>
+    <div class="acc-chips">{% for a in pf.accounts %}<span class="acc">{{ a.platform[1] }} {{ a.handle }} {{ ui.verified("Verified account") }}</span>{% endfor %}</div>
+    <dl class="kpis" style="--n:3">{% for k, v in pf.metrics %}{{ ui.kpi(k, v, "verified") }}{% endfor %}</dl>
+    <div class="stack" style="--gap:14px"><h2 class="h3">Featured clips</h2>
+      <div class="reel" style="gap:12px">{% for a, b in [(262,198),(290,220),(220,170),(250,320)] %}<div style="position:relative;background:linear-gradient(160deg,hsl({{ a }} 60% 30%),hsl({{ b }} 70% 18%))"><span class="badge" style="position:absolute;left:8px;bottom:8px;background:rgba(11,11,18,.7)">{{ ["412K","188K","96K","61K"][loop.index0] }} views</span></div>{% endfor %}</div></div>
+    <form id="hire" class="card stack" style="--gap:16px" onsubmit="return false" aria-label="Work with me enquiry (preview)">
+      <h2 class="h3">Work with me</h2>
+      <div class="form-grid">
+        <label class="field"><span>Name</span><input class="input"></label>
+        <label class="field"><span>Business name</span><input class="input"></label>
+        <label class="field"><span>Email</span><input class="input" type="email"></label>
+        <label class="field"><span>Preferred contact</span><select class="select"><option>Email</option><option>Phone</option><option>Discord</option></select></label>
+        <label class="field full"><span>Project description</span><textarea class="textarea"></textarea></label>
+        <label class="field"><span>Clips per month</span><input class="input" placeholder="e.g. 30"></label>
+        <label class="field"><span>Estimated monthly budget</span><select class="select"><option>Under $500</option><option>$500–1,000</option><option>$1,000–2,500</option><option>$2,500+</option></select></label>
+      </div>
+      <button class="btn btn-primary" disabled>Send enquiry</button>
+    </form>
+  </div>
+</div>

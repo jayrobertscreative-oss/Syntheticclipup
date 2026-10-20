@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% import "_ui.html" as ui %}
+{% block title %}{{ pf.name }} — Synthetic Clip Up{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block body %}
+<div class="container" style="max-width:1000px;padding-block:20px 60px;display:grid;gap:16px">
+  {{ ui.demo_banner("Example portfolio — a Phase 1 design preview. Real sites will live at syntheticclipup.com/u/username.") }}
+  <div class="card-glass pf">{% include "design/_portfolio_site.html" %}</div>
+  <p class="center muted small">Made with <a class="link" href="/portfolio-builder">Synthetic Clip Up</a></p>
+</div>
+{% endblock %}

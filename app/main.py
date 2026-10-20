@@ -17,7 +17,7 @@ from starlette.responses import FileResponse, JSONResponse, Response
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
-from . import config, db, media, youtube
+from . import config, db, media, web, youtube
 
 ALLOWED_EXT = {".mp4", ".mov", ".m4v"}
 LENGTHS = {15, 30, 45, 60}
@@ -243,22 +243,30 @@ async def index(request: Request):
     return FileResponse(config.ROOT / "static" / "index.html", headers={"Cache-Control": "no-cache"})
 
 
+PUBLIC_API = {"/api/health", "/api/fees/quote"}  # fee quotes are display-only maths for the public pricing page
+
+
 class AccessKey(BaseHTTPMiddleware):
     """Until Phase 2 accounts exist, an optional shared key keeps a deployed server private."""
     async def dispatch(self, request, call_next):
         p = request.url.path
-        if config.ACCESS_KEY and p.startswith("/api/") and p != "/api/health":
+        if config.ACCESS_KEY and p.startswith("/api/") and p not in PUBLIC_API:
             if not hmac.compare_digest(request.headers.get("x-scu-key", ""), config.ACCESS_KEY):
                 return err(401, "Enter your Synthetic Clip Up access key.")
         resp: Response = await call_next(request)
         resp.headers.setdefault("X-Content-Type-Options", "nosniff")
+        resp.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        resp.headers.setdefault("X-Frame-Options", "DENY")
+        if p.startswith("/design"):
+            resp.headers.setdefault("X-Robots-Tag", "noindex")
         return resp
 
 
 db.init()
 app = Starlette(
     routes=[
-        Route("/", index),
+        *web.routes,                      # public site + design previews (app/web.py)
+        Route("/studio", index),          # Clip Studio app (was "/" before Phase 1)
         Route("/api/health", health),
         Route("/api/stats", stats),
         Route("/api/activity", activity),

@@ -1,0 +1,63 @@
+{% extends "design/_dash.html" %}
+{% block dash %}
+<div class="page-head">
+  <div><p class="eyebrow">Overview</p><h1 class="row" style="--gap:10px">{{ d.name }} <span class="badge">Not yet verified</span></h1></div>
+  <div class="row"><a class="btn btn-sm" href="/design/manager/review">{{ ui.icon("clock") }}Review queue <span class="count" style="margin-left:4px">{{ d.pending_reviews }}</span></a><a class="btn btn-primary btn-sm" href="/design/manager/create">{{ ui.icon("plus") }}Create campaign</a></div>
+</div>
+
+<dl class="kpis" style="--n:5">
+  {{ ui.kpi("Funded reward balance", d.funded_balance|money, "held for approved rewards") }}
+  {{ ui.kpi("Rewards awaiting payment", d.obligations|money, "due within payment terms") }}
+  {{ ui.kpi("Pending reviews", d.pending_reviews, "oldest: 67 h · 5 h left") }}
+  {{ ui.kpi("Verified views · 30d", d.views_30d|compact, "+31% vs prior 30d", True) }}
+  {{ ui.kpi("Reward spend · 30d", d.spend_30d|money, "plus host fees") }}
+</dl>
+
+<div class="cols-main">
+  <div class="stack" style="--gap:24px">
+    <section class="panel" aria-labelledby="q-h">
+      <div class="panel-head"><div><h2 id="q-h">Review queue</h2><p class="muted small">Default 72-hour review period · reminders at 24 h and 6 h left</p></div><a class="link small" href="/design/manager/review">Open queue</a></div>
+      <div class="list">
+        {% for s in d.queue %}
+        <div>{{ ui.platform_chip(s.platform) }}
+          <div class="grow"><b>{{ s.title }}</b><small>@{{ s.clipper }} · posted {{ s.published }}, submitted {{ s.submitted }} ({{ s.within }} min) · {{ s.views|compact }} views</small></div>
+          <span class="timer{% if s.left_h <= 6 %} late{% elif s.left_h > 48 %} ok{% endif %}">{{ s.left_h }} h left</span>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="c-h">
+      <div class="panel-head"><h2 id="c-h">Your campaigns</h2><a class="link small" href="/design/manager/manage">Manage</a></div>
+      <div class="table-wrap" style="border:0;background:none">
+        <table class="t">
+          <thead><tr><th>Campaign</th><th>Funding</th><th class="r">Rate</th><th class="r">Budget</th><th class="r">Clippers</th></tr></thead>
+          <tbody>{% for c in d.campaigns %}
+            <tr><td><div class="cell-main"><div class="thumb-xs" style="overflow:hidden;position:relative">{{ ui.art(c.art[0], c.art[1], "m" ~ loop.index) }}</div><div><b>{{ c.title }}</b><small>{{ c.category }} · {{ c.platforms|map('first')|join(', ') }}</small></div></div></td>
+              <td>{{ ui.funding_badge(c.funding) }}</td><td class="r">{{ c.rate_per_1k|money }}/1K</td>
+              <td class="r">{% if c.funding == "funded" %}{{ c.remaining|money }} left<br><small class="muted">of {{ c.budget|money }} deposited</small>{% else %}{{ c.budget|money }} limit<br><small class="muted">not deposited</small>{% endif %}</td>
+              <td class="r">{{ c.participants }}</td></tr>
+          {% endfor %}</tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="stack" style="--gap:24px">
+    <section class="panel stack" style="--gap:14px" aria-labelledby="v-h">
+      <div class="row" style="justify-content:space-between"><h2 id="v-h" style="font-size:15.5px">Verification progress</h2>{{ ui.verified() }}</div>
+      <div><b class="num" style="font:600 26px var(--display)">{{ d.verification.qualifying|money }}</b> <span class="muted">/ {{ d.verification.threshold|money }}</span></div>
+      <div class="progress-lg" role="img" aria-label="{{ d.verification.percent }}% toward verification"><i style="width:{{ d.verification.percent }}%"></i></div>
+      <p class="muted small">{{ d.verification.percent }}% · Counts completed reward payouts to clippers. Platform fees, refunds, reversals and unsettled payments don't count. At $2,000 we run risk checks and the account goes for approval.</p>
+    </section>
+
+    <section class="panel stack" style="--gap:12px" aria-labelledby="f-h">
+      <h2 id="f-h" style="font-size:15.5px">Funding at a glance</h2>
+      <div class="card-flat" style="padding:14px;background:var(--card)"><div class="row" style="justify-content:space-between">{{ ui.funding_badge("funded") }}</div>
+        <dl class="kv" style="margin-top:10px"><dt>Reward budget</dt><dd>{{ d.funded_quote.reward_budget|money }}</dd><dt>Host fee (10%)</dt><dd>{{ d.funded_quote.host_fee|money }}</dd><dt>Collected</dt><dd><b>{{ d.funded_quote.due_now|money }}</b></dd></dl></div>
+      <div class="card-flat" style="padding:14px;background:var(--card)">{{ ui.funding_badge("flexible") }}
+        <dl class="kv" style="margin-top:10px"><dt>Spending limit</dt><dd>{{ d.flex_quote.advertised_limit|money }}</dd><dt>Launch fee paid</dt><dd>{{ d.flex_quote.launch_fee|money }}</dd><dt>Fee credit left</dt><dd>{{ d.flex_quote.host_fee_credit|money }}</dd></dl></div>
+    </section>
+  </div>
+</div>
+{% endblock %}

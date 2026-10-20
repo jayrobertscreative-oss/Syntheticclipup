@@ -1,0 +1,48 @@
+{% extends "design/_dash.html" %}
+{% block dash %}
+<div class="page-head"><div><p class="eyebrow">Clips</p><h1>Submit a clip</h1><p class="muted" style="margin-top:6px">Paste the public link within 60 minutes of posting it on a connected, verified account.</p></div></div>
+
+<div class="cols-main">
+  <form class="panel stack" style="--gap:18px" onsubmit="return false" aria-label="Submit a clip (preview)">
+    <label class="field"><span>Campaign</span>
+      <select class="select">{% for c in d.joined %}<option>{{ c.title }} — {{ c.rate_per_1k|money }}/1K</option>{% endfor %}</select></label>
+    <label class="field"><span>Public post URL</span>
+      <span class="input-wrap">{{ ui.icon("link") }}<input value="https://www.tiktok.com/@kai.clips/video/7431…" aria-describedby="url-help"></span>
+      <small id="url-help">TikTok, Instagram Reels, YouTube Shorts or Facebook. We detect the platform from the link.</small></label>
+
+    <div class="stack" style="--gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden" aria-label="Verification checks">
+      {% for label, state, note in [
+        ("Link is a valid public post", "ok", "TikTok video"),
+        ("Posted from one of your verified accounts", "ok", "@kai.clips · verified via OAuth"),
+        ("Publish time from TikTok's API", "ok", "14:02 BST"),
+        ("Submitted within 60 minutes", "ok", "Received 14:24 on our server · 22 min"),
+        ("Not already submitted", "ok", "No duplicates found"),
+        ("Campaign hashtags & mention", "info", "Checked by the host at review")] %}
+      <div class="row" style="justify-content:space-between;padding:12px 16px;border-top:1px solid var(--line);{% if loop.first %}border-top:0{% endif %}">
+        <span class="row" style="--gap:10px"><span class="verified" style="background:{{ 'var(--ok)' if state == 'ok' else 'var(--line2)' }}"><svg><use href="#i-{{ 'check' if state == 'ok' else 'clock' }}"/></svg></span>{{ label }}</span>
+        <span class="muted small">{{ note }}</span></div>
+      {% endfor %}
+    </div>
+    <div class="notice">{{ ui.icon("info") }}<span>If a platform's API doesn't give us the account or publish time, your clip is marked <b>Verification Pending</b> for a manual check. We never mark a check as passed when we couldn't run it.</span></div>
+    <div class="row"><button class="btn btn-primary" disabled>Submit for review</button><button class="btn" disabled>Save draft</button><span class="muted small">Disabled in the preview</span></div>
+  </form>
+
+  <div class="stack" style="--gap:24px">
+    <section class="panel">
+      <div class="panel-head"><h2>60-minute window</h2></div>
+      <div class="stack" style="--gap:10px">
+        <div class="row" style="justify-content:space-between"><span class="muted small">Posted 14:02</span><span class="muted small">Deadline 15:02</span></div>
+        <div class="progress-lg" role="img" aria-label="22 of 60 minutes used"><i style="width:36.7%"></i></div>
+        <p class="small"><b>38 minutes left</b> <span class="muted">to submit this clip.</span></p>
+      </div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h2>What happens next</h2></div>
+      <div class="stack" style="--gap:8px">
+        {% for k, l, t in statuses %}<div class="row" style="--gap:10px">{{ ui.status(l, t) }}</div>{% endfor %}
+      </div>
+      <p class="muted small" style="margin-top:12px">Hosts have 72 hours to review. Late reviews go to the Synthetic Clip Up team — they're never auto-rejected.</p>
+    </section>
+  </div>
+</div>
+{% endblock %}

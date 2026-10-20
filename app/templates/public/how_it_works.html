@@ -1,0 +1,46 @@
+{% extends "public/_layout.html" %}
+{% block title %}How It Works — Synthetic Clip Up{% endblock %}
+{% block main %}
+<section class="section-tight glow-bg">
+  <div class="container stack" style="--gap:40px">
+    <div class="section-head center" style="margin:0"><span class="eyebrow">How it works</span><h1 class="h1">Built for clippers. Trusted by hosts.</h1></div>
+
+    <div id="clippers" class="split" style="align-items:start">
+      <div class="stack" style="--gap:14px"><span class="eyebrow">For clippers</span><h2 class="h2">Earn from clips you post</h2>
+        <p class="muted">Join with no clients and no portfolio. Every accepted clip builds both.</p></div>
+      <ol class="stack" style="--gap:12px;list-style:none;padding:0;margin:0">
+        {% for t, d in [
+          ("Create your account and connect socials","Prove you own each TikTok, Instagram, YouTube or Facebook account through official sign-in, a bio code, or manual review."),
+          ("Join campaigns instantly","If you meet a campaign's objective requirements you're in — no application. You get the brief and the host's community link, if they've added one."),
+          ("Make the clip","Use Clip Studio or your own editor. Follow the campaign's hashtags, captions and mentions."),
+          ("Post, then submit within 60 minutes","Paste the public link. We check the platform, the account and the publish time. If a platform's API can't confirm something, your clip goes to Verification Pending instead of being guessed."),
+          ("Get reviewed and paid","Hosts have 72 hours to review. Unreviewed clips are escalated to us — never auto-rejected. Rewards follow verified views; you see gross, fee and net before payout.")] %}
+        <li class="card-flat" style="padding:18px;display:grid;grid-template-columns:auto 1fr;gap:14px"><span class="mono" style="color:var(--purple-2)">0{{ loop.index }}</span><div><b>{{ t }}</b><p class="muted small" style="margin-top:4px">{{ d }}</p></div></li>
+        {% endfor %}
+      </ol>
+    </div>
+
+    <div id="hosts" class="split" style="align-items:start">
+      <div class="stack" style="--gap:14px"><span class="eyebrow">For hosts</span><h2 class="h2">Commission clips at scale</h2>
+        <p class="muted">Brands, streamers, creators and agencies set a rate per 1,000 views and pay only for eligible, verified performance.</p></div>
+      <ol class="stack" style="--gap:12px;list-style:none;padding:0;margin:0">
+        {% for t, d in [
+          ("Create a campaign","Set the brief, platforms, rate per 1K views, minimum views, per-clip cap, dates, requirements, assets and community link. Save drafts any time."),
+          ("Choose how to fund it","Fully Funded: deposit the budget plus the 10% fee. Pay As You Go: pay a 10% launch fee on the advertised limit and fund rewards as clips are approved."),
+          ("Review clips","Each submission shows the verified account, publish and submit times, eligibility and views. Accept or reject with a reason within 72 hours."),
+          ("Pay and build reputation","Pay individually or in batches. After $2,000 in completed payouts you can be reviewed for a verified tick.")] %}
+        <li class="card-flat" style="padding:18px;display:grid;grid-template-columns:auto 1fr;gap:14px"><span class="mono" style="color:var(--blue)">0{{ loop.index }}</span><div><b>{{ t }}</b><p class="muted small" style="margin-top:4px">{{ d }}</p></div></li>
+        {% endfor %}
+      </ol>
+    </div>
+
+    <div class="card stack" style="--gap:16px">
+      <h2 class="h3">Every submission status, in plain sight</h2>
+      <div class="row" style="--gap:8px">{% for k, l, t in statuses %}{{ ui.status(l, t) }}{% if not loop.last %}<span class="muted" aria-hidden="true">→</span>{% endif %}{% endfor %}</div>
+      <p class="muted small">Every change of status is recorded with who made it and why.</p>
+    </div>
+  </div>
+</section>
+<section class="section-tight" id="faq"><div class="container"><div class="section-head center"><span class="eyebrow">FAQ</span><h2 class="h2">Common questions</h2></div>
+  <div class="faq">{% for q, a in faq %}<details><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}</div></div></section>
+{% endblock %}
