@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% import "_ui.html" as ui %}
+{% block body %}
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container">
+    <a class="logo" href="/" aria-label="Synthetic Clip Up home"><img src="/static/scu-emblem.jpg" alt="" width="36" height="36"><div><b>SYNTHETIC CLIP UP</b><small>CREATE · CLIP · EARN · SCALE</small></div></a>
+    <nav class="site-nav" aria-label="Main">
+      {% for href, label in nav %}<a href="{{ href }}"{% if path == href %} aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}
+    </nav>
+    <div class="header-cta">
+      <a class="btn btn-ghost btn-sm" href="/sign-in">Sign In</a>
+      <a class="btn btn-primary btn-sm" href="/get-started">Get Started</a>
+    </div>
+    <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mnav" data-menu>{{ ui.icon("menu") }}</button>
+  </div>
+  <nav class="mobile-nav" id="mnav" aria-label="Mobile">
+    {% for href, label in nav %}<a href="{{ href }}"{% if path == href %} aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}
+    <a href="/sign-in">Sign In</a>
+    <a class="btn btn-primary" style="margin-top:12px;border:0" href="/get-started">Get Started</a>
+  </nav>
+</header>
+<main id="main">{% block main %}{% endblock %}</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="stack" style="--gap:14px">
+        <a class="logo" href="/"><img src="/static/scu-emblem.jpg" alt="" width="36" height="36"><div><b>SYNTHETIC CLIP UP</b><small>CREATE · CLIP · EARN · SCALE</small></div></a>
+        <p class="muted small measure">The clipping marketplace with a built-in AI Clip Studio, verified accounts and free portfolio websites.</p>
+      </div>
+      <div><h4>Product</h4><ul><li><a href="/campaigns">Explore Campaigns</a></li><li><a href="/clip-studio">Clip Studio</a></li><li><a href="/portfolio-builder">Portfolio Builder</a></li><li><a href="/pricing">Pricing</a></li></ul></div>
+      <div><h4>For hosts</h4><ul><li><a href="/get-started?role=manager">Launch a campaign</a></li><li><a href="/how-it-works#hosts">How hosting works</a></li><li><a href="/pricing#funding">Funding options</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="/how-it-works#faq">Support &amp; FAQ</a></li><li><a href="/legal">Terms</a></li><li><a href="/legal#privacy">Privacy</a></li><li><a href="/legal#payouts">Payout terms</a></li></ul></div>
+    </div>
+    <div class="footer-base"><span>© 2026 Synthetic Clip Up</span><span>Not an escrow service. Payments are processed by an approved marketplace payment provider.</span></div>
+  </div>
+</footer>
+{% endblock %}

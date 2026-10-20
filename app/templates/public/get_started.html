@@ -1,0 +1,22 @@
+{% extends "public/_layout.html" %}
+{% block title %}Get Started — Synthetic Clip Up{% endblock %}
+{% block main %}
+<section class="auth glow-bg">
+  <div class="card stack" style="--gap:22px;max-width:560px">
+    <div class="stack" style="--gap:6px"><h1 class="h2">Create your account</h1><p class="muted">Choose how you'll use Synthetic Clip Up. You can add the other role later.</p></div>
+    <form class="stack" style="--gap:18px" onsubmit="return false">
+      <fieldset class="choice" style="border:0;padding:0;margin:0"><legend class="sr-only">Account type</legend>
+        <label><input type="radio" name="role" value="clipper"{% if role == "clipper" %} checked{% endif %}><b>Clipper</b><p>Create clips, join paid campaigns, build a verified portfolio.</p></label>
+        <label><input type="radio" name="role" value="manager"{% if role == "manager" %} checked{% endif %}><b>Campaign Manager</b><p>Launch paid clipping campaigns for a brand, stream or agency.</p></label>
+      </fieldset>
+      <div class="form-grid">
+        <label class="field full"><span>Email</span><input class="input" type="email" autocomplete="email" placeholder="you@example.com" disabled></label>
+        <label class="field full"><span>Password</span><input class="input" type="password" autocomplete="new-password" disabled></label>
+      </div>
+      <div class="notice warn">{{ ui.icon("info") }}<span>Registration opens in Phase 2. Nothing you choose here is stored yet. Meanwhile you can <a class="link" href="/studio">use Clip Studio</a> or <a class="link" href="/design">preview the dashboards</a>.</span></div>
+      <button class="btn btn-primary btn-block btn-lg" disabled>Create account</button>
+    </form>
+    <p class="muted small center">Already have an account? <a class="link" href="/sign-in">Sign in</a></p>
+  </div>
+</section>
+{% endblock %}

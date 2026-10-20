@@ -1,0 +1,49 @@
+{% extends "public/_layout.html" %}
+{% block title %}Explore Campaigns — Synthetic Clip Up{% endblock %}
+{% block main %}
+<section class="section-tight glow-bg">
+  <div class="container stack" style="--gap:28px">
+    <div class="section-head" style="margin:0"><span class="eyebrow">Explore campaigns</span><h1 class="h1">Find a campaign to clip for</h1>
+      <p class="lead measure">Filter by category, platform, reward rate and funding. Every card shows whether rewards are deposited or paid as the host funds approved clips.</p></div>
+
+    <div class="notice warn" role="note">{{ ui.icon("info") }}<span><b>The marketplace isn't open yet.</b> Live paid campaigns: {{ stats.campaigns_live }}. The cards below are examples of the format, and the filters work on them so you can try the experience. Real listings arrive in Phase 3, once accounts and payments are live.</span></div>
+
+    <form class="card-flat stack" style="--gap:16px;padding:18px" id="filters" onsubmit="return false" aria-label="Campaign filters">
+      <div class="row" style="--gap:12px">
+        <label class="input-wrap" style="flex:1;min-width:220px">{{ ui.icon("search") }}<span class="sr-only">Search</span><input type="search" name="q" placeholder="Search campaigns or hosts"></label>
+        <label class="field" style="min-width:160px"><span class="sr-only">Category</span><select class="select" name="category"><option value="">All categories</option>{% for c in categories %}<option>{{ c }}</option>{% endfor %}</select></label>
+        <label class="field" style="min-width:150px"><span class="sr-only">Platform</span><select class="select" name="platform"><option value="">All platforms</option>{% for n, ab in platforms %}<option value="{{ ab }}">{{ n }}</option>{% endfor %}</select></label>
+        <label class="field" style="min-width:170px"><span class="sr-only">Sort</span><select class="select" name="sort"><option value="newest">Newest</option><option value="popular">Most popular</option><option value="rate">Highest rate</option><option value="budget">Most budget remaining</option></select></label>
+      </div>
+      <div class="row" style="--gap:8px">
+        <button type="button" class="chip" aria-pressed="false" data-filter="funded">{{ ui.icon("lock") }}Fully Funded only</button>
+        <button type="button" class="chip" aria-pressed="false" data-filter="verified">{{ ui.icon("shield") }}Verified hosts</button>
+        <button type="button" class="chip" aria-pressed="false" data-filter="rate">$2+ per 1K</button>
+        <span class="muted small" style="margin-left:auto" id="count" aria-live="polite">{{ campaigns|length }} example campaigns</span>
+      </div>
+    </form>
+
+    <div class="campaigns" id="list">
+      {% for c in campaigns %}
+      <div data-c data-title="{{ (c.title ~ ' ' ~ c.host)|lower }}" data-cat="{{ c.category }}" data-plat="{{ c.platforms|map('last')|join(',') }}"
+           data-funded="{{ 1 if c.funding == 'funded' else 0 }}" data-verified="{{ 1 if c.host_verified else 0 }}" data-rate="{{ c.rate_per_1k }}"
+           data-pop="{{ c.participants }}" data-rem="{{ c.remaining or 0 }}" data-i="{{ loop.index }}" style="display:contents">{{ ui.campaign_card(c) }}</div>
+      {% endfor %}
+    </div>
+    <div id="none" hidden>{{ ui.empty("No campaigns match those filters", "Try clearing a filter or searching for something broader.") }}</div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+(()=>{const f=document.getElementById("filters"),list=document.getElementById("list"),cards=[...list.querySelectorAll("[data-c]")];
+ const on=k=>f.querySelector(`[data-filter=${k}]`).getAttribute("aria-pressed")==="true";
+ function apply(){const q=f.q.value.trim().toLowerCase(),cat=f.category.value,pl=f.platform.value,sort=f.sort.value;let n=0;
+  const key={newest:c=>+c.dataset.i,popular:c=>-c.dataset.pop,rate:c=>-c.dataset.rate,budget:c=>-c.dataset.rem}[sort];
+  cards.sort((a,b)=>key(a)-key(b)).forEach(c=>{const show=(!q||c.dataset.title.includes(q))&&(!cat||c.dataset.cat===cat)&&(!pl||c.dataset.plat.split(",").includes(pl))
+   &&(!on("funded")||c.dataset.funded==="1")&&(!on("verified")||c.dataset.verified==="1")&&(!on("rate")||+c.dataset.rate>=200);
+   c.style.display=show?"contents":"none";if(show)n++;list.appendChild(c)});
+  document.getElementById("count").textContent=`${n} example campaign${n===1?"":"s"}`;document.getElementById("none").hidden=n>0}
+ f.addEventListener("input",apply);f.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{b.setAttribute("aria-pressed",String(!on(b.dataset.filter)));apply()});})();
+</script>
+{% endblock %}

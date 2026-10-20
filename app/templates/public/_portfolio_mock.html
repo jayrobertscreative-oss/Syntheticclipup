@@ -1,0 +1,13 @@
+<div class="card-glass pf" role="img" aria-label="Illustration of a clipper portfolio website">
+  <div class="studio-bar" style="padding:12px 16px 10px;border-bottom:1px solid var(--line)"><i></i><i></i><i></i><span>syntheticclipup.com/u/kai</span></div>
+  <div class="pf-hero">
+    <div class="avatar">KM</div>
+    <div style="min-width:0"><b style="font:600 18px var(--display)">Kai Morgan</b><p class="muted small">Short-form editor for podcasts &amp; streams</p></div>
+    <span class="btn btn-primary btn-sm" style="margin-left:auto">Work With Me</span>
+  </div>
+  <div class="pf-body">
+    <div class="acc-chips">{% for n, ab in [("TikTok","TT"),("YouTube","YT"),("Instagram","IG")] %}<span class="acc">{{ ab }} {{ n }} <span class="verified" aria-label="Verified"><svg><use href="#i-check"/></svg></span></span>{% endfor %}</div>
+    <div class="grid-3" style="gap:8px">{% for k, v in [("Verified views","8.4M"),("Campaigns","63"),("Avg / clip","41K")] %}<div class="tile" style="padding:12px;gap:2px"><small class="muted">{{ k }}</small><b style="font:600 18px var(--display)">{{ v }}</b></div>{% endfor %}</div>
+    <div class="reel">{% for a, b in [(262,198),(290,220),(220,170),(250,320)] %}<div style="background:linear-gradient(160deg,hsl({{ a }} 60% 30%),hsl({{ b }} 70% 18%))"></div>{% endfor %}</div>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+{% extends "design/_dash.html" %}
+{% block dash %}
+<div class="page-head"><div><p class="eyebrow">Review</p><h1>Pending review</h1><p class="muted" style="margin-top:6px">Founder podcast — best moments · {{ queue|length }} submissions</p></div>
+  <div class="row"><button class="btn btn-sm" disabled>Accept all eligible</button></div></div>
+
+<div class="stack" style="--gap:16px">
+{% for s in queue %}
+<article class="panel review-card">
+  <div class="phone" style="border-radius:12px"><div class="cap" style="font-size:9px">{{ s.title.split()[:3]|join(" ") }}</div></div>
+  <div class="stack" style="--gap:12px;min-width:0">
+    <div class="row" style="justify-content:space-between"><h2 class="h3" style="font-size:16px">{{ s.title }}</h2><span class="timer{% if s.left_h <= 6 %} late{% elif s.left_h > 48 %} ok{% endif %}">{{ s.left_h }} h left to review</span></div>
+    <div class="row" style="--gap:8px">{{ ui.platform_chip(s.platform) }}<b>@{{ s.clipper }}</b>{{ ui.status("Verified account", "ok") }}<a class="link small" href="#">{{ ui.icon("external") }}</a></div>
+    <dl class="kv kv-4">
+      <dt>Published</dt><dd>{{ s.published }} (platform)</dd>
+      <dt>Submitted</dt><dd>{{ s.submitted }} (server) · {{ s.within }} min</dd>
+      <dt>Views so far</dt><dd>{{ "{:,}".format(s.views) }}</dd>
+      <dt>Eligibility</dt><dd>{% if s.eligible %}<span style="color:var(--ok)">Meets 10K minimum</span>{% else %}<span style="color:var(--warn)">Below 10K minimum so far</span>{% endif %}</dd>
+    </dl>
+    <label class="field"><span class="sr-only">Rejection reason</span><select class="select" style="height:38px"><option>Rejection reason (required to reject)…</option><option>Missing required hashtag or mention</option><option>Doesn't follow the brief</option><option>Prohibited content</option><option>Not original / reposted</option><option>Other (explain)</option></select></label>
+  </div>
+  <div class="stack" style="--gap:8px;min-width:120px"><button class="btn btn-primary btn-sm" disabled>{{ ui.icon("check") }}Accept</button><button class="btn btn-sm" disabled>{{ ui.icon("x") }}Reject</button></div>
+</article>
+{% endfor %}
+</div>
+<div class="notice">{{ ui.icon("info") }}<span>Accepting doesn't pay immediately: the reward is calculated from verified views over the campaign's measurement window, then becomes a reward obligation you fund within the payment terms. Unreviewed clips are escalated to Synthetic Clip Up after 72 hours, never auto-rejected.</span></div>
+{% endblock %}

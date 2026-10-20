@@ -1,0 +1,74 @@
+{% extends "public/_layout.html" %}
+{% block title %}Pricing — Synthetic Clip Up{% endblock %}
+{% set hf = "%g"|format(s.host_fee_bps / 100) %}{% set cf = "%g"|format(s.clipper_fee_bps / 100) %}
+{% block main %}
+<section class="section-tight glow-bg">
+  <div class="container stack" style="--gap:40px">
+    <div class="section-head center" style="margin:0"><span class="eyebrow">Pricing</span><h1 class="h1">Transparent fees. No surprises.</h1>
+      <p class="lead measure center">Joining is free. We earn a platform fee when campaigns run and rewards are paid. Every amount is calculated on our servers and shown before you commit.</p></div>
+
+    <div class="grid-3">
+      <div class="card price-card"><span class="eyebrow">Clippers</span><div class="price">{{ cf }}%<small> of paid rewards</small></div>
+        <ul class="feature-list" style="margin:0"><li>{{ ui.icon("check") }}<span>Free account and portfolio site</span></li><li>{{ ui.icon("check") }}<span>{{ payout.gross|money }} reward → {{ payout.net|money }} to you</span></li><li>{{ ui.icon("check") }}<span>No fee on off-platform retainers</span></li></ul>
+        <a class="btn btn-primary btn-block" href="/get-started?role=clipper">Start Clipping</a></div>
+      <div class="card price-card" id="funding"><span class="eyebrow">Hosts · Fully Funded</span><div class="price">{{ hf }}%<small> host fee</small></div>
+        <ul class="feature-list" style="margin:0"><li>{{ ui.icon("check") }}<span>Deposit the budget + fee before launch</span></li><li>{{ ui.icon("check") }}<span>{{ funded.reward_budget|money }} budget → {{ funded.due_now|money }} collected</span></li><li>{{ ui.icon("check") }}<span>“Fully Funded” badge after the payment settles</span></li></ul>
+        <a class="btn btn-block" href="/get-started?role=manager">Launch a Campaign</a></div>
+      <div class="card price-card"><span class="eyebrow">Hosts · Pay As You Go</span><div class="price">{{ hf }}%<small> launch fee</small></div>
+        <ul class="feature-list" style="margin:0"><li>{{ ui.icon("check") }}<span>{{ flex.advertised_limit|money }} limit → {{ flex.launch_fee|money }} due at launch</span></li><li>{{ ui.icon("check") }}<span>Launch fee credited against later host fees</span></li><li>{{ ui.icon("check") }}<span>Fund approved clips individually or in batches</span></li></ul>
+        <a class="btn btn-block" href="/get-started?role=manager">Launch a Campaign</a></div>
+    </div>
+
+    <div class="split" style="align-items:start">
+      <div class="stack" style="--gap:14px">
+        <span class="eyebrow">Fee calculator</span><h2 class="h2">See exactly what you'd pay</h2>
+        <p class="muted">The numbers come from the same server-side fee engine that will charge real payments. Nothing is charged here.</p>
+        <div class="notice">{{ ui.icon("info") }}<span>On Pay As You Go campaigns the advertised budget is a spending limit, not deposited money, so we label those campaigns “Pay As You Go — Rewards Not Pre-Funded”. A saved card isn't a guarantee that a future payment will succeed.</span></div>
+      </div>
+      <form class="card calc" id="calc" onsubmit="return false" aria-describedby="calc-out">
+        <div class="tabs" role="tablist" aria-label="Calculator">
+          <button type="button" role="tab" aria-selected="true" data-mode="funded">Fully Funded</button>
+          <button type="button" role="tab" aria-selected="false" data-mode="flexible">Pay As You Go</button>
+          <button type="button" role="tab" aria-selected="false" data-mode="reward">Clipper reward</button>
+        </div>
+        <div data-for="funded flexible"><label class="field"><span data-label>Reward budget</span><span class="input-wrap"><span class="pre">$</span><input name="budget" inputmode="decimal" value="10,000" aria-label="Budget in dollars"></span></label></div>
+        <div data-for="reward" hidden class="form-grid">
+          <label class="field"><span>Verified eligible views</span><span class="input-wrap"><input name="views" inputmode="numeric" value="100000"></span></label>
+          <label class="field"><span>Rate per 1,000 views</span><span class="input-wrap"><span class="pre">$</span><input name="rate" inputmode="decimal" value="2.00"></span></label>
+          <label class="field"><span>Minimum views</span><span class="input-wrap"><input name="min_views" inputmode="numeric" value="10000"></span></label>
+          <label class="field"><span>Max payout per clip <small>(optional)</small></span><span class="input-wrap"><span class="pre">$</span><input name="cap" inputmode="decimal" placeholder="No cap"></span></label>
+        </div>
+        <div class="calc-out" id="calc-out" aria-live="polite"></div>
+        <p class="small" id="calc-err" style="color:#F87171;min-height:1em" role="alert"></p>
+      </form>
+    </div>
+
+    <div id="studio" class="stack" style="--gap:20px">
+      <div class="section-head" style="margin:0"><span class="eyebrow">Clip Studio plans</span><h2 class="h2">Tokens for AI clipping</h2>
+        <p class="muted measure">Every account starts with 200 free tokens. An AI clip uses 25 tokens and a download uses 20. Plans are billed monthly with no cancellation fees. Billing opens with accounts.</p></div>
+      <div class="grid-3">
+        <div class="card-flat price-card"><span class="eyebrow">Free</span><div class="price">$0</div><p class="muted">200 tokens to start — enough to try several clips.</p></div>
+        <div class="card-flat price-card"><span class="eyebrow">Clipper</span><div class="price">$20<small> / month</small></div><p class="muted">2,800 tokens every month.</p></div>
+        <div class="card-flat price-card" style="border-color:rgba(120,86,255,.5)"><span class="eyebrow">Clipper Premium</span><div class="price">$40<small> / month</small></div><p class="muted">Unlimited tokens.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section-tight"><div class="container"><div class="faq">{% for q, a in faq %}<details><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}</div></div></section>
+{% endblock %}
+{% block scripts %}
+<script>
+(()=>{const f=document.getElementById("calc"),out=document.getElementById("calc-out"),er=document.getElementById("calc-err");let mode="funded",t;
+ const rows={funded:d=>[["Reward budget (held for rewards)",d.reward_budget],[`Host platform fee (${d.host_fee_bps/100}%)`,d.host_fee],["Due before launch",d.due_now,1]],
+  flexible:d=>[["Advertised spending limit — not deposited",d.advertised_limit],[`Launch fee (${d.host_fee_bps/100}%)`,d.launch_fee],["Credited against later host fees",d.host_fee_credit],["Due at launch",d.due_now,1]],
+  reward:d=>[["Gross reward"+(d.below_minimum?" (below minimum views)":d.capped?" (capped)":""),d.gross],[`Platform fee (${d.clipper_fee_bps/100}%)`,-d.clipper_fee],["Clipper receives",d.net,1]]};
+ const money=m=>(m<0?"−":"")+"$"+(Math.abs(m)/100).toLocaleString("en-US",{minimumFractionDigits:Math.abs(m)%100?2:0,maximumFractionDigits:2});
+ async function run(){const p=new URLSearchParams({mode});
+  if(mode==="reward"){for(const k of["views","rate","min_views","cap"]){const v=f[k].value.replace(/,/g,"").trim();if(v)p.set(k,v)}}else p.set("budget",f.budget.value);
+  try{const r=await fetch("/api/fees/quote?"+p),d=await r.json();if(!r.ok)throw new Error(d.error);er.textContent="";
+   out.innerHTML=rows[mode](d).map(([k,v,tot])=>`<div class="${tot?"total":""}"><span>${k}</span><b>${money(v)}</b></div>`).join("")}catch(e){er.textContent=e.message||"Couldn't calculate"}}
+ f.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{mode=b.dataset.mode;f.querySelectorAll("[data-mode]").forEach(x=>x.setAttribute("aria-selected",String(x===b)));
+  f.querySelectorAll("[data-for]").forEach(x=>x.hidden=!x.dataset.for.split(" ").includes(mode));f.querySelector("[data-label]").textContent=mode==="flexible"?"Advertised budget":"Reward budget";run()});
+ f.addEventListener("input",()=>{clearTimeout(t);t=setTimeout(run,220)});run();})();
+</script>
+{% endblock %}

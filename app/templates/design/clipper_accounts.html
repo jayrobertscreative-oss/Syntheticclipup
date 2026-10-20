@@ -1,0 +1,27 @@
+{% extends "design/_dash.html" %}
+{% block dash %}
+<div class="page-head"><div><p class="eyebrow">Growth</p><h1>Connected accounts</h1><p class="muted" style="margin-top:6px">Only clips posted from verified accounts can be submitted to campaigns.</p></div>
+  <button class="btn btn-primary btn-sm" disabled>{{ ui.icon("plus") }}Connect an account</button></div>
+
+<div class="grid-2">
+  {% for a in accounts %}
+  <section class="panel stack" style="--gap:16px">
+    <div class="row" style="justify-content:space-between">
+      <div class="row" style="--gap:12px">{{ ui.platform_chip(a.platform) }}<div><b>{{ a.handle }}</b><p class="muted small">{{ a.platform[0] }} · connected {{ a.since }}</p></div></div>
+      {% if a.state == "verified" %}{{ ui.status("Ownership verified", "ok") }}{% else %}{{ ui.status("Pending manual review", "warn") }}{% endif %}
+    </div>
+    <dl class="kv"><dt>Verification method</dt><dd>{{ a.method }}</dd><dt>Followers</dt><dd>{{ a.followers }}</dd><dt>Analytics</dt><dd>{{ "Views, likes, comments" if a.state == "verified" and a.method != "Bio code" else ("Public views only" if a.method == "Bio code" else "Unavailable until verified") }}</dd><dt>Account health</dt><dd>{{ a.health }}</dd></dl>
+    <div class="row"><button class="btn btn-sm" disabled>Refresh</button><button class="btn btn-sm btn-ghost" disabled>Disconnect &amp; revoke access</button></div>
+  </section>
+  {% endfor %}
+</div>
+
+<section class="panel">
+  <div class="panel-head"><h2>How ownership is verified</h2></div>
+  <div class="grid-3">
+    <div class="tile"><div class="ico">{{ ui.icon("lock") }}</div><h3>Official sign-in (OAuth)</h3><p>Preferred. You sign in on the platform and grant read access. Tokens are encrypted and can be revoked any time.</p></div>
+    <div class="tile"><div class="ico">{{ ui.icon("shield") }}</div><h3>Bio code</h3><p>We give you a one-time code that expires. Put it in your profile bio; we check it through an authorised method, then you can remove it.</p></div>
+    <div class="tile"><div class="ico">{{ ui.icon("users") }}</div><h3>Manual review</h3><p>When neither is possible, our team reviews evidence. A typed username alone never counts as verified.</p></div>
+  </div>
+</section>
+{% endblock %}

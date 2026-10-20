@@ -1,4 +1,51 @@
-# Synthetic Clip Up — clipping backend (Stage 3a)
+# Synthetic Clip Up
+
+**Create. Clip. Earn. Scale.** A clipping marketplace with a built-in AI Clip Studio, verified social
+accounts, paid campaigns, free portfolio websites and a private Owner Control Centre.
+
+The full plan, status of every feature and the phase order are in **[docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md)**.
+
+## What runs today (Phase 1)
+
+| URL | What it is | Status |
+|---|---|---|
+| `/` | Public homepage (hero, how it works, featured campaigns, Clip Studio, portfolio, verified accounts, analytics, fees, FAQ) | Built |
+| `/campaigns`, `/clip-studio`, `/portfolio-builder`, `/how-it-works`, `/pricing`, `/legal` | Public pages | Built |
+| `/sign-in`, `/get-started` | Account screens (Clipper or Campaign Manager; owner is never offered) | UI only — accounts arrive in Phase 2 |
+| `/studio` | Clip Studio — the real clipping engine below (moved here from `/`) | Working |
+| `/design` | Dashboard previews: clipper, campaign manager, Owner Control Centre, portfolio editor and public portfolio | Mockups with labelled demo data |
+| `/api/fees/quote` | Server-side fee maths used by the pricing calculator and campaign form (no money moves) | Working, tested |
+
+Honesty rules the site follows: live numbers (clips rendered, minutes processed) come from the real
+database; marketplace numbers say "Opening soon" until real campaigns exist; every illustrative card
+says **Example** and every dashboard preview carries a **Demo data** banner.
+
+Set `SCU_DESIGN_PREVIEWS=0` to hide `/design` (e.g. once real dashboards exist).
+Fee defaults (host 10%, clipper 5%) can be changed without code: `SCU_HOST_FEE_BPS`, `SCU_CLIPPER_FEE_BPS`,
+`SCU_LAUNCH_FEE_MIN_MINOR`, `SCU_LAUNCH_FEE_MAX_MINOR` (basis points / cents). Phase 2 moves these into an owner-editable table.
+
+### Code layout (new in Phase 1)
+
+```
+app/web.py          public pages, dashboard previews, fee-quote API
+app/fees.py         authoritative fee & reward maths (integer cents, tested against every brief example)
+app/demo.py         illustrative data for previews only — never read by engine or money code
+app/templates/      Jinja2: base layout, UI macros (_ui.html), public/ and design/ pages
+static/css/scu.css  design system (same tokens as the original dashboard)
+static/js/site.js   menus, dashboard drawer, chart tooltips
+tests/test_fees.py, tests/test_web.py
+```
+
+### Tests
+
+```
+python -m unittest discover -s tests -p "test_*.py"   # fees + every page and dashboard screen
+python tests/smoke_test.py                            # clipping engine end to end (real FFmpeg)
+```
+
+---
+
+## Clip Studio engine (the clipping backend)
 
 Upload a video you own → FFmpeg extracts the audio → speech is transcribed with word timestamps →
 Claude picks the best moments → FFmpeg renders real captioned MP4 clips → preview and download them.
@@ -45,11 +92,11 @@ synthetic-clip-up/
    uvicorn app.main:app --port 8000        # tab 1: website + API
    python -m app.worker                    # tab 2: processing worker
    ```
-4. Open http://localhost:8000
+4. Open http://localhost:8000 (site) and http://localhost:8000/studio (Clip Studio)
 
 ### Your first real test
 
-1. AI Auto Clipper → choose a ~5-minute MP4 you own with clear speech.
+1. Open `/studio` → AI Auto Clipper → choose a ~5-minute MP4 you own with clear speech.
 2. Pick 30 s, 3 clips, 9:16, Creator Bold, tick the rights box, press **Generate AI clips**.
 3. The project page shows each stage as the worker reaches it. A 5-minute video usually finishes in 1–3 minutes.
 4. Play each clip, then **Download MP4**.

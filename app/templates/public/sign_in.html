@@ -1,0 +1,16 @@
+{% extends "public/_layout.html" %}
+{% block title %}Sign In — Synthetic Clip Up{% endblock %}
+{% block main %}
+<section class="auth glow-bg">
+  <div class="card stack" style="--gap:20px">
+    <div class="stack" style="--gap:6px"><h1 class="h2">Welcome back</h1><p class="muted">Sign in to your clipper or campaign manager account.</p></div>
+    <div class="notice warn">{{ ui.icon("info") }}<span>Accounts open in Phase 2. Until then, Clip Studio works without signing in.</span></div>
+    <form class="stack" style="--gap:14px" onsubmit="return false">
+      <label class="field"><span>Email</span><input class="input" type="email" autocomplete="email" placeholder="you@example.com" disabled></label>
+      <label class="field"><span>Password</span><input class="input" type="password" autocomplete="current-password" disabled></label>
+      <button class="btn btn-primary btn-block" disabled>Sign in</button>
+    </form>
+    <p class="muted small center">New here? <a class="link" href="/get-started">Create an account</a> · <a class="link" href="/studio">Open Clip Studio</a></p>
+  </div>
+</section>
+{% endblock %}

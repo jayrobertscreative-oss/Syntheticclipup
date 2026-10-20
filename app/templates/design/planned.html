@@ -1,0 +1,9 @@
+{% extends "design/_dash.html" %}
+{% block dash %}
+<div class="page-head"><div><p class="eyebrow">{{ role_label }}</p><h1>{{ title }}</h1></div>{% if phase %}<span class="badge badge-brand">Phase {{ phase }}</span>{% endif %}</div>
+<section class="panel stack" style="--gap:16px;max-width:720px">
+  <p class="muted">This screen hasn't been designed in detail yet. Here's what it will contain{% if phase %}, delivered in Phase {{ phase }}{% endif %}:</p>
+  <ul class="feature-list" style="margin:0">{% for b in bullets %}<li>{{ ui.icon("check") }}<span>{{ b }}</span></li>{% endfor %}</ul>
+  <div class="row"><a class="btn btn-sm" href="/design/{{ role }}/overview">Back to overview</a></div>
+</section>
+{% endblock %}

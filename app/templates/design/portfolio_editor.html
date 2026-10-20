@@ -1,0 +1,31 @@
+{% extends "design/_dash.html" %}
+{% block dash %}
+<div class="page-head"><div><p class="eyebrow">Portfolio builder</p><h1>Your website</h1><p class="muted mono small" style="margin-top:6px">syntheticclipup.com/u/{{ pf.handle }} · {{ ui.status("Published", "ok") }}</p></div>
+  <div class="row"><div class="tabs" data-seg-group data-seg-target="#frame"><button aria-pressed="true" data-value="frame-desktop">{{ ui.icon("monitor") }}<span class="sr-only">Desktop</span></button><button aria-pressed="false" data-value="frame-mobile">{{ ui.icon("phone") }}<span class="sr-only">Mobile</span></button></div>
+    <a class="btn btn-sm" href="/design/u/demo">{{ ui.icon("eye") }}Preview</a><button class="btn btn-sm" disabled>Unpublish</button><button class="btn btn-primary btn-sm" disabled>Publish changes</button></div></div>
+
+<div class="builder">
+  <div class="rail" aria-label="Sections">
+    <p class="label" style="padding:0 2px">Sections · drag to reorder</p>
+    {% for s, on in [("Hero", True), ("About", False), ("Verified accounts", False), ("Stats", False), ("Featured clips", False), ("Previous work", False), ("Work with me", False)] %}
+    <div class="sec-item{% if on %} on{% endif %}"><span class="grip" aria-hidden="true">⋮⋮</span>{{ s }}</div>
+    {% endfor %}
+    <button class="btn btn-sm btn-ghost" disabled>{{ ui.icon("plus") }}Add section</button>
+  </div>
+  <div class="canvas"><div id="frame" class="frame-desktop"><div class="card-glass pf">{% include "design/_portfolio_site.html" %}</div></div></div>
+  <aside class="panel stack" style="--gap:16px" aria-label="Section settings">
+    <h2 style="font-size:15.5px">Hero</h2>
+    <label class="field"><span>Display name</span><input class="input" value="{{ pf.name }}"></label>
+    <label class="field"><span>Headline</span><input class="input" value="{{ pf.headline }}"></label>
+    <label class="field"><span>Profile photo</span><span class="input-wrap" style="color:var(--muted)">{{ ui.icon("upload") }} Upload image</span></label>
+    <div class="field"><span class="label">Accent colour</span><div class="swatches">{% for c in ["#7856FF","#36C8FF","#22C55E","#F59E0B","#EF4444"] %}<button type="button" style="background:{{ c }}" aria-label="Accent {{ c }}" aria-pressed="{{ 'true' if loop.first else 'false' }}"></button>{% endfor %}</div></div>
+    <div class="field"><span class="label">Template</span><select class="select"><option>Neon (current)</option><option>Minimal</option><option>Studio</option></select></div>
+    <hr class="divider">
+    <h3 style="font-size:14px">Public metrics</h3>
+    {% for k, on in [("Total verified views", True), ("Completed campaigns", True), ("Average views per clip", True), ("Social reach", False), ("Earnings", False)] %}
+    <label class="row" style="justify-content:space-between;font-size:13.5px"><span>{{ k }}</span><input type="checkbox"{% if on %} checked{% endif %} style="accent-color:var(--purple);width:18px;height:18px"></label>
+    {% endfor %}
+    <p class="muted small">Only verified data can be shown. Earnings stay private unless you turn them on.</p>
+  </aside>
+</div>
+{% endblock %}

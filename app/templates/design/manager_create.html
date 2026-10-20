@@ -1,0 +1,81 @@
+{% extends "design/_dash.html" %}
+{% block dash %}
+<div class="page-head"><div><p class="eyebrow">Campaigns</p><h1>Create campaign</h1><p class="muted" style="margin-top:6px">Save a draft at any point. Publishing takes you to payment.</p></div>
+  <div class="row"><button class="btn btn-sm" disabled>Save draft</button><button class="btn btn-primary btn-sm" disabled>Continue to payment</button></div></div>
+
+<div class="cols-main">
+  <form class="stack" style="--gap:20px" id="cform" onsubmit="return false" aria-label="Create campaign (preview)">
+    <section class="panel stack" style="--gap:16px"><h2 class="h3" style="font-size:15.5px">1 · Basics</h2>
+      <div class="form-grid">
+        <label class="field"><span>Campaign name</span><input class="input" value="Founder podcast — best moments"></label>
+        <label class="field"><span>Brand or creator</span><input class="input" value="Ledger &amp; Co."></label>
+        <label class="field full"><span>Description</span><textarea class="textarea">Clip the sharpest moments from our weekly founder interviews. Focus on lessons, hiring stories and money mistakes.</textarea></label>
+        <label class="field"><span>Category</span><select class="select">{% for c in categories %}<option{% if c == "Podcasts" %} selected{% endif %}>{{ c }}</option>{% endfor %}</select></label>
+        <label class="field"><span>Thumbnail</span><span class="input-wrap" style="color:var(--muted)">{{ ui.icon("upload") }} Upload 16:9 image (JPG/PNG, ≤ 5 MB)</span></label>
+        <fieldset class="field full" style="border:0;padding:0;margin:0"><legend class="label" style="margin-bottom:8px">Target platforms</legend>
+          <div class="row" style="--gap:8px">{% for n, ab in platforms %}<button type="button" class="chip" aria-pressed="{{ 'true' if ab != 'FB' else 'false' }}" data-toggle>{{ n }}</button>{% endfor %}</div></fieldset>
+      </div>
+    </section>
+
+    <section class="panel stack" style="--gap:16px"><h2 class="h3" style="font-size:15.5px">2 · Rewards</h2>
+      <div class="form-grid">
+        <label class="field"><span>Reward per 1,000 qualifying views</span><span class="input-wrap"><span class="pre">$</span><input value="1.80" inputmode="decimal"></span></label>
+        <label class="field"><span>Minimum eligible views</span><span class="input-wrap"><input value="10,000" inputmode="numeric"></span></label>
+        <label class="field"><span>Maximum payout per clip <small>(optional)</small></span><span class="input-wrap"><span class="pre">$</span><input value="300" inputmode="decimal"></span></label>
+        <label class="field"><span>Total campaign budget</span><span class="input-wrap"><span class="pre">$</span><input name="budget" value="5,000" inputmode="decimal"></span></label>
+        <label class="field"><span>Start date</span><input class="input" type="date" value="2026-11-01"></label>
+        <label class="field"><span>End date</span><input class="input" type="date" value="2026-12-15"></label>
+      </div>
+    </section>
+
+    <section class="panel stack" style="--gap:16px"><h2 class="h3" style="font-size:15.5px">3 · Requirements</h2>
+      <div class="form-grid">
+        <label class="field"><span>Required hashtags</span><input class="input" value="#LedgerPod #FounderLessons"></label>
+        <label class="field"><span>Required tags or mentions</span><input class="input" value="@ledgerandco"></label>
+        <label class="field full"><span>Required caption text</span><input class="input" value="Full episode on Ledger & Co."></label>
+        <label class="field full"><span>Campaign requirements</span><textarea class="textarea">Clips 20–60 s, vertical, captions on. Credit the guest by name on screen.</textarea></label>
+        <label class="field full"><span>Prohibited content</span><textarea class="textarea" style="min-height:70px">No misleading titles, no out-of-context quotes, no reuploads of full segments.</textarea></label>
+      </div>
+    </section>
+
+    <section class="panel stack" style="--gap:16px"><h2 class="h3" style="font-size:15.5px">4 · Materials &amp; community</h2>
+      <div class="form-grid">
+        <label class="field full"><span>Source video links</span><input class="input" placeholder="https://… (one per line)"></label>
+        <label class="field"><span>Reference doc (Google Docs etc.)</span><input class="input" placeholder="https://docs.google.com/…"></label>
+        <label class="field"><span>Example video links</span><input class="input" placeholder="https://…"></label>
+        <label class="field"><span>Brand assets</span><span class="input-wrap" style="color:var(--muted)">{{ ui.icon("upload") }} Logos, fonts, overlays (ZIP ≤ 200 MB)</span></label>
+        <label class="field"><span>Community invitation</span><span class="input-wrap"><select style="border:0;background:none;outline:0;max-width:110px"><option>Discord</option><option>Group chat</option><option>Community page</option><option>Private instructions</option></select><input placeholder="https://discord.gg/…"></span><small>Sent to clippers when they join. Leave empty and clippers see “not provided by host”.</small></label>
+      </div>
+    </section>
+
+    <section class="panel stack" style="--gap:16px"><h2 class="h3" style="font-size:15.5px">5 · Funding method</h2>
+      <fieldset class="choice" style="border:0;padding:0;margin:0"><legend class="sr-only">Funding method</legend>
+        <label><input type="radio" name="mode" value="funded" checked><b>Fully Funded</b><p>Deposit the full reward budget plus the {{ "%g"|format(s.host_fee_bps / 100) }}% fee. Shows the Fully Funded badge once payment settles.</p></label>
+        <label><input type="radio" name="mode" value="flexible"><b>Pay As You Go</b><p>Pay a {{ "%g"|format(s.host_fee_bps / 100) }}% launch fee now and fund approved clips as you go. Labelled “Rewards Not Pre-Funded”.</p></label>
+      </fieldset>
+    </section>
+  </form>
+
+  <aside class="stack" style="--gap:16px;position:sticky;top:88px">
+    <section class="panel stack" style="--gap:14px" aria-live="polite">
+      <h2 style="font-size:15.5px">Due when you publish</h2>
+      <div class="calc-out" id="quote"></div>
+      <p class="small" id="qerr" style="color:#F87171" role="alert"></p>
+      <p class="muted small" id="qnote"></p>
+    </section>
+    <div class="notice">{{ ui.icon("info") }}<span>Fees are calculated on our server and confirmed again at checkout. Changing the rate later only applies to new submissions.</span></div>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(()=>{const f=document.getElementById("cform"),q=document.getElementById("quote"),er=document.getElementById("qerr"),note=document.getElementById("qnote");let t;
+ const money=m=>"$"+(m/100).toLocaleString("en-US",{minimumFractionDigits:m%100?2:0,maximumFractionDigits:2});
+ async function run(){const mode=f.mode.value;try{const r=await fetch(`/api/fees/quote?mode=${mode}&budget=${encodeURIComponent(f.budget.value)}`),d=await r.json();if(!r.ok)throw new Error(d.error);er.textContent="";
+  const rows=mode==="funded"?[["Reward budget",d.reward_budget],[`Host fee (${d.host_fee_bps/100}%)`,d.host_fee],["Total due",d.due_now,1]]:[["Spending limit (not deposited)",d.advertised_limit],[`Launch fee (${d.host_fee_bps/100}%)`,d.launch_fee],["Total due",d.due_now,1]];
+  q.innerHTML=rows.map(([k,v,x])=>`<div class="${x?"total":""}"><span>${k}</span><b>${money(v)}</b></div>`).join("");
+  note.textContent=mode==="funded"?"The fee is recorded separately from your reward funds.":`Your ${money(d.launch_fee)} launch fee is credited against host fees when you fund approved rewards.`}catch(e){er.textContent=e.message}}
+ f.addEventListener("input",()=>{clearTimeout(t);t=setTimeout(run,200)});f.addEventListener("change",run);
+ f.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>b.setAttribute("aria-pressed",String(b.getAttribute("aria-pressed")!=="true")));run();})();
+</script>
+{% endblock %}

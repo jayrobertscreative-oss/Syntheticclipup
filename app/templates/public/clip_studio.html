@@ -1,0 +1,52 @@
+{% extends "public/_layout.html" %}
+{% block title %}Clip Studio — Synthetic Clip Up{% endblock %}
+{% block main %}
+<section class="hero glow-bg">
+  <div class="container split">
+    <div class="reveal">
+      <span class="eyebrow">AI Clip Studio</span>
+      <h1 class="h1" style="margin-top:14px">Long video in. Captioned short clips out.</h1>
+      <p class="lead" style="margin-top:18px">Clip Studio is real processing software running on our servers. It transcribes your video, finds the moments that stand on their own, burns in captions and renders MP4s you can post today.</p>
+      <div class="hero-ctas"><a class="btn btn-primary btn-lg" href="/studio">Open Clip Studio {{ ui.icon("arrow") }}</a><a class="btn btn-lg" href="/pricing#studio">Plans &amp; tokens</a></div>
+      <p class="muted small" style="margin-top:18px">So far: <b class="num" style="color:var(--fg)">{{ "{:,}".format(stats.clips) }}</b> clips rendered from <b class="num" style="color:var(--fg)">{{ "{:,}".format(stats.minutes) }}</b> minutes of video (live count).</p>
+    </div>
+    <div class="reveal d2">{% include "public/_studio_mock.html" %}</div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="section-head"><span class="eyebrow">The pipeline</span><h2 class="h2">Nine real stages — no fake progress bars</h2></div>
+    <div class="grid-3">
+      {% for n, t, d in [
+        ("01","Validate & prepare","Checks the file is a real MP4/MOV with video and audio, within length and size limits."),
+        ("02","Extract audio","FFmpeg pulls a speech-optimised track, split into parts for long videos."),
+        ("03","Transcribe","Speech-to-text with word-level timestamps."),
+        ("04","Analyse highlights","AI reads the timestamped transcript and ranks hooks, funny, emotional and educational moments."),
+        ("05","Snap boundaries","Clip starts and ends are snapped to whole words and sentences. No mid-word cuts, no overlaps."),
+        ("06","Caption & render","Word-by-word captions are burned in and clips render to 9:16, 1:1 or 16:9 with thumbnails.")] %}
+      <div class="tile"><span class="mono small" style="color:var(--purple-2)">{{ n }}</span><h3>{{ t }}</h3><p>{{ d }}</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container split">
+    <div>
+      <span class="eyebrow">Caption styles</span>
+      <h2 class="h2" style="margin-top:12px">Six styles, highlighted word by word</h2>
+      <div class="row" style="--gap:8px;margin-top:20px">{% for st in styles %}<span class="chip" style="cursor:default">{{ st }}</span>{% endfor %}</div>
+    </div>
+    <div class="card-flat stack" style="--gap:14px">
+      <h3 class="h3">What's next for Clip Studio</h3>
+      <ul class="feature-list" style="margin-top:0">
+        <li>{{ ui.icon("check") }}<span>Your projects and library tied to your account (Phase 10)</span></li>
+        <li>{{ ui.icon("check") }}<span>Edit subtitles and trim clips after rendering</span></li>
+        <li>{{ ui.icon("check") }}<span>“Use in campaign” — export, post on your account, submit the link</span></li>
+      </ul>
+      <div class="notice">{{ ui.icon("info") }}<span>Pasting a YouTube link shows the video's details through YouTube's official API, but the API doesn't provide the video file. To clip it, upload your original. Clip Studio never claims to have posted anything for you unless an official publishing integration confirms it.</span></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
